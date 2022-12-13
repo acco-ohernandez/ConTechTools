@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RevitAddIns>
+  <AddIn Type="Command">
+    <Text>ConTech Tools</Text>
+    <Description>Some description for ConTechTools</Description>
+    <Assembly>ConTechTools.dll</Assembly>
+    <FullClassName>ConTechTools.Command</FullClassName>
+    <ClientId>b3f12bd3-ac0a-43e9-8211-0b1c193be9e8</ClientId>
+    <VendorId>com.typepad.thebuildingcoder</VendorId>
+    <VendorDescription>The Building Coder, http://thebuildingcoder.typepad.com</VendorDescription>
+  </AddIn>
+  <AddIn Type="Application">
+    <Name>Application ConTechTools</Name>
+    <Assembly>ConTechTools.dll</Assembly>
+    <FullClassName>ConTechTools.App</FullClassName>
+    <ClientId>37fe33eb-aedd-450e-9348-4949f53743d8</ClientId>
+    <VendorId>com.typepad.thebuildingcoder</VendorId>
+    <VendorDescription>The Building Coder, http://thebuildingcoder.typepad.com</VendorDescription>
+  </AddIn>
+</RevitAddIns>
