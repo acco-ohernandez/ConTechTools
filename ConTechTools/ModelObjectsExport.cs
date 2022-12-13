@@ -26,35 +26,50 @@ namespace ConTechTools
             Application app = uiapp.Application;
             Document doc = uidoc.Document;
 
-            // Access current selection
+            //Test message
+            WinSys.MessageBox.Show("This will be the Object styles Export to CSV botton!", "MessageBoxTest");
 
-            Selection sel = uidoc.Selection;
+            //1: Collect Object style categories into a list
+            // List<Categories> allCategories = GetAllCategories(doc);
 
-            // Retrieve elements from database
+            //2: Separte categories by type
 
-            FilteredElementCollector col
-              = new FilteredElementCollector(doc)
-                .WhereElementIsNotElementType()
-                .OfCategory(BuiltInCategory.INVALID)
-                .OfClass(typeof(Wall));
+            //3: export to CSV
 
-            // Filtered element collector is iterable
-            WinSys.MessageBox.Show("MOS Button Works!","MessageBoxTest");
 
-            foreach (Element e in col)
-            {
-                Debug.Print(e.Name);
-            }
+            
+            
 
-            // Modify document within a transaction
 
+            /*
             using (Transaction tx = new Transaction(doc))
             {
                 tx.Start("Transaction Name");
                 tx.Commit();
             }
+            */
 
             return Result.Succeeded;
         }
+
+        //private List<Category> GetAllCategories(Document doc)
+        //{
+        //    //FilteredElementCollector allCategories = new FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_ImportObjectStyles);
+        //    FilteredElementCollector collector = new FilteredElementCollector(doc);
+        //    collector.OfClass(typeof(Category));
+        //    List<Category> allCategories = new List<Category>();
+        //    foreach (Element curCategory in collector)
+        //    {
+        //        if (curCategory.GetType() == typeof(Category))
+        //        {
+        //            Category c = new Category;
+        //            c = curCategory;
+        //            allCategories.Add(curCategory);
+        //        }
+                
+        //    }
+            
+        //    return allCategories;
+        //}
     }
 }

@@ -61,12 +61,14 @@
     <Compile Include="App.cs" />
     <Compile Include="ModelObjectsExport.cs" />
     <Compile Include="Command.cs" />
+    <Compile Include="ModelOjectsStyleImport.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="TemporaryCommand.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="ConTechTools.addin" />
