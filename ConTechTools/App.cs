@@ -10,7 +10,6 @@ using System.Reflection;
 using System.Windows.Media.Imaging;
 using System.IO;
 using System.Windows.Media;
-
 #endregion
 
 namespace ConTechTools
