@@ -32,7 +32,7 @@ namespace ConTechTools
             Document doc = uidoc.Document;
             //***************
             //Test message
-            WinSys.MessageBox.Show("Please while the Model Object Style Settings export opens!", "Exporting MOSS",WinSys.MessageBoxButton.OK,WinSys.MessageBoxImage.Exclamation);
+            WinSys.MessageBox.Show("This will Export the Model Object Style Settings!", "Exporting MOSS",WinSys.MessageBoxButton.OK,WinSys.MessageBoxImage.Exclamation);
             //Console.WriteLine("Console.WriteLine - Test===================================");
             //Debug.WriteLine("Debug.WriteLine - Test===================================");
             //Debug.Print("Debug.Print - Test===================================");
@@ -59,20 +59,20 @@ namespace ConTechTools
             foreach (Category c in categories)
             {
                 //if (c.CategoryType == CategoryType.Model || c.CategoryType == CategoryType.Annotation)
-                if (c.CategoryType == CategoryType.Model)
+                if (c.CategoryType == CategoryType.Model && c.CanAddSubcategory == true)
                     {
                     //Debug.Print("---------------------");
                     // Use this if block if you only want to output the visible categories
                     if (c.IsVisibleInUI)
                     {
                         //OutputCatInfo(doc, c);
-                        
+
                         CategoryNameMap subCats = c.SubCategories;
                         if (subCats != null)
                         {
                             foreach (Category cat in subCats)
                             {
-                               string returnedCategory =  OutputCatInfo(doc, cat);
+                                string returnedCategory = OutputCatInfo(doc, cat);
                                 Debug.Print(returnedCategory);
                                 ObjStylesSettingString.Add(returnedCategory);
                             }
@@ -93,6 +93,7 @@ namespace ConTechTools
                 }
             }
 
+            // Create the excel file and add the ObjectStylesSettinsg data.
             AddToExcel(excelFileName, ObjStylesSettingString); 
 
             return Result.Succeeded;
@@ -101,8 +102,10 @@ namespace ConTechTools
         private string OutputCatInfo(Document doc, Category cat)
         {
             string rowData;
+            // This will de Data to the following columns of the Excel file.
+            // ParrentCategory,SubCategoryName,LW_Projection,LW_Cut,LineColor,LinePattern,Material
 
-            //ParrentCategory,SubCategoryName,LW_Projection,LW_Cut,LineColor,LinePattern,Material
+            // ParrentCategory,SubCategoryName Columns
             if (cat.Parent != null)
                 rowData = cat.Parent.Name + ":" + cat.Name;
             else
@@ -116,39 +119,53 @@ namespace ConTechTools
 
             Element projLineType = doc.GetElement(projLinePatternId);
             Element cutLineType = doc.GetElement(cutLinePatternId);
-
-
+            
+            // LW_Projection Column
             if (cutLW != null)
                 rowData += ":" + cutLW.ToString();
             else
                 rowData += ":";
 
+            // LW_Cut Column
             if (projLW != null)
                 rowData += ":" + projLW.ToString();
             else
                 rowData += ":";
 
+            // LineColor Column
             Color color = cat.LineColor;
             if (color != null)
                 rowData += ":" + color.Red.ToString() + " "
                          + color.Green.ToString() + " "
                          + color.Blue.ToString();
 
-            if (cutLineType != null)
-                rowData += ":" + cutLineType.Name; 
-            else
-                rowData += ":";
 
-            if (projLineType != null)
+            // LinePattern Column
+            if (cutLineType != null)
+                rowData += ":" + cutLineType.Name;
+            else if (projLineType != null)
                 rowData += ":" + projLineType.Name;
             else
-                rowData += ":";
+                rowData += ":Solid";
+            //// LinePattern Column
+            //if (cutLineType != null)
+            //    rowData += ":" + cutLineType.Name; 
+            //else
+            //    rowData += ":Solid";
 
-            
+            //// --
+            //if (projLineType != null)
+            //    rowData += ":" + projLineType.Name; 
+            //else
+            //    rowData += ":";
 
+
+            // Material Column
             Material mat = cat.Material;
             if (mat != null)
-                rowData += mat.Name.ToString();
+                rowData += ":" + mat.Name.ToString();
+            else
+                rowData += ":";
 
             //Debug.Print(rowData);
             return rowData;
