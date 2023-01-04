@@ -11,7 +11,7 @@ using WinSys = System.Windows;
 namespace ConTechTools
 {
     [Transaction(TransactionMode.Manual)]
-    public class ModelOjectsStyleImport : IExternalCommand
+    public class ModelObjectsStyleImport : IExternalCommand
     {
         public Result Execute(
           ExternalCommandData commandData,

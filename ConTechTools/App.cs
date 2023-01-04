@@ -34,7 +34,7 @@ namespace ConTechTools
 
             //Step 3: Create button data instances (pbd = Push Button Data)
             PushButtonData pData1 = new PushButtonData("MOS_Button", "Export\rObject Styles", GetAssemblyName(), "ConTechTools.ModelObjectsExport");
-            PushButtonData pData2 = new PushButtonData("Button2Name", "Import\rObject Styles", GetAssemblyName(), "ConTechTools.ModelOjectsStyleImport");
+            PushButtonData pData2 = new PushButtonData("Button2Name", "Import\rObject Styles", GetAssemblyName(), "ConTechTools.ModelObjectsStyleImport");
             PushButtonData pData3 = new PushButtonData("Button3Name", "pbNotInUse3", GetAssemblyName(), "ConTechTools.TemporaryCommand");
             PushButtonData pData4 = new PushButtonData("Button4Name", "pbNotInUse4", GetAssemblyName(), "ConTechTools.TemporaryCommand");
             PushButtonData pData5 = new PushButtonData("Button5Name", "pbNotInUse5", GetAssemblyName(), "ConTechTools.TemporaryCommand");
