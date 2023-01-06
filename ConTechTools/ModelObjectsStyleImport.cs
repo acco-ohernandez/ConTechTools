@@ -24,7 +24,7 @@ namespace ConTechTools
             Document doc = uidoc.Document;
 
             //Test message
-            WinSys.MessageBox.Show("This will be the Object styles Import from CSV botton!", "MessageBoxTest");
+            WinSys.MessageBox.Show("This will be the Object styles Import from CSV botton!\n This Class has not been coded yet.", "MessageBoxTest");
 
             // Get csv content
 

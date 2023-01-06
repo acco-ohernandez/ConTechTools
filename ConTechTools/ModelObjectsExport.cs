@@ -51,7 +51,6 @@ namespace ConTechTools
 
             List<string> ObjStylesSettingString = new List<string>();
             string header = "ParrentCategory:SubCategoryName:LW_Projection:LW_Cut:LineColor:LinePattern:Material";
-            ObjStylesSettingString.Add(header);
             Debug.Print(header);
 
             // get all categories
@@ -92,6 +91,10 @@ namespace ConTechTools
                     //}
                 }
             }
+
+            // Sort and insert the headers
+            ObjStylesSettingString.Sort();
+            ObjStylesSettingString.Insert(0, header);
 
             // Create the excel file and add the ObjectStylesSettinsg data.
             AddToExcel(excelFileName, ObjStylesSettingString); 
