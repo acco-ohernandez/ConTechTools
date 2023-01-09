@@ -27,6 +27,10 @@ namespace ConTechTools
             WinSys.MessageBox.Show("This is a temporary place holder command class!", "MessageBoxTest");
 
 
+            //Console.WriteLine("Console.WriteLine - Test===================================");
+            //Debug.WriteLine("Debug.WriteLine - Test===================================");
+            //Debug.Print("Debug.Print - Test===================================");
+
             return Result.Succeeded;
         }
 

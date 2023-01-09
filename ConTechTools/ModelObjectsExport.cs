@@ -11,7 +11,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using WinSys =  System.Windows;
+using SysDraw = System.Drawing;
 using System.IO;
+using System.Windows.Controls;
 //using System.Windows.Forms;
 
 #endregion
@@ -33,9 +35,7 @@ namespace ConTechTools
             //***************
             //Test message
             WinSys.MessageBox.Show("This will Export the Model Object Style Settings!", "Exporting MOSS",WinSys.MessageBoxButton.OK,WinSys.MessageBoxImage.Exclamation);
-            //Console.WriteLine("Console.WriteLine - Test===================================");
-            //Debug.WriteLine("Debug.WriteLine - Test===================================");
-            //Debug.Print("Debug.Print - Test===================================");
+            
             //***************
 
             // Get the current date and time
@@ -60,11 +60,18 @@ namespace ConTechTools
                 //if (c.CategoryType == CategoryType.Model || c.CategoryType == CategoryType.Annotation)
                 if (c.CategoryType == CategoryType.Model && c.CanAddSubcategory == true)
                     {
-                    //Debug.Print("---------------------");
-                    // Use this if block if you only want to output the visible categories
+                    // Output the visible categories
                     if (c.IsVisibleInUI)
                     {
-                        //OutputCatInfo(doc, c);
+                        string GetParrentCategoryValues = c.Name + ":" +
+                                   (c.GetLineWeight(GraphicsStyleType.Projection)).ToString() + ":" +
+                                   (c.GetLineWeight(GraphicsStyleType.Cut)).ToString() + ":" +
+                                   GetLineColorName(c.LineColor) + ":" +
+                                   GetLineProjLinePatter(doc, c) + ":" +
+                                   GetCategoryMaterial(c.Material);
+
+                        Debug.Print(GetParrentCategoryValues);
+                        ObjStylesSettingString.Add(GetParrentCategoryValues);
 
                         CategoryNameMap subCats = c.SubCategories;
                         if (subCats != null)
@@ -77,29 +84,45 @@ namespace ConTechTools
                             }
                         }
                     }
-
-                    ////Use this block if you want to output visible and hiden categories
-                    //OutputCatInfo(doc, c);
-
-                    //CategoryNameMap subCats = c.SubCategories;
-                    //if (subCats != null)
-                    //{
-                    //    foreach (Category cat in subCats)
-                    //    {
-                    //        OutputCatInfo(doc, cat);
-                    //    }
-                    //}
                 }
             }
 
             // Sort and insert the headers
-            ObjStylesSettingString.Sort();
+            //ObjStylesSettingString.Sort();
             ObjStylesSettingString.Insert(0, header);
 
             // Create the excel file and add the ObjectStylesSettinsg data.
             AddToExcel(excelFileName, ObjStylesSettingString); 
 
             return Result.Succeeded;
+        }
+
+        private string GetCategoryMaterial(Material catMaterial)
+        {
+            if (catMaterial != null)
+                return catMaterial.Name.ToString();
+            else
+                return "";
+        }
+
+        // This method will return the Line Patter Value
+        private string GetLineProjLinePatter(Document doc, Category cat)
+        {
+            ElementId ElemId = cat.GetLinePatternId(GraphicsStyleType.Projection);
+            Element catLinePatter = doc.GetElement(ElemId);
+            if(catLinePatter != null)
+                return catLinePatter.Name;
+            else if (ElemId.IntegerValue == -3000010)
+                return "Solid";
+            else return "";
+        }
+
+        private string GetLineColorName(Color lineColor)
+        {
+
+            return lineColor.Red.ToString() + '-' +
+                   lineColor.Green.ToString() + '-' +
+                   lineColor.Blue.ToString();
         }
 
         private string OutputCatInfo(Document doc, Category cat)
@@ -110,7 +133,7 @@ namespace ConTechTools
 
             // ParrentCategory,SubCategoryName Columns
             if (cat.Parent != null)
-                rowData = cat.Parent.Name + ":" + cat.Name;
+                rowData = "---|" + ":" + cat.Name;//rowData = cat.Parent.Name + ":" + cat.Name;
             else
                 rowData = cat.Name + ":" + cat.Name;
 
@@ -135,12 +158,7 @@ namespace ConTechTools
             else
                 rowData += ":";
 
-            // LineColor Column
-            Color color = cat.LineColor;
-            if (color != null)
-                rowData += ":" + color.Red.ToString() + " "
-                         + color.Green.ToString() + " "
-                         + color.Blue.ToString();
+            rowData += ":" + GetLineColorName(cat.LineColor);
 
 
             // LinePattern Column
@@ -150,18 +168,6 @@ namespace ConTechTools
                 rowData += ":" + projLineType.Name;
             else
                 rowData += ":Solid";
-            //// LinePattern Column
-            //if (cutLineType != null)
-            //    rowData += ":" + cutLineType.Name; 
-            //else
-            //    rowData += ":Solid";
-
-            //// --
-            //if (projLineType != null)
-            //    rowData += ":" + projLineType.Name; 
-            //else
-            //    rowData += ":";
-
 
             // Material Column
             Material mat = cat.Material;
