@@ -1,5 +1,5 @@
 #region Namespaces
-using Autodesk.Revit.ApplicationServices;
+using RApiApp =  Autodesk.Revit.ApplicationServices;
 using Autodesk.Revit.Attributes;
 //using Autodesk.Revit.Creation;
 using Autodesk.Revit.DB;
@@ -14,6 +14,7 @@ using WinSys =  System.Windows;
 using SysDraw = System.Drawing;
 using System.IO;
 using System.Windows.Controls;
+using Microsoft.Office.Interop.Excel;
 //using System.Windows.Forms;
 
 #endregion
@@ -30,7 +31,7 @@ namespace ConTechTools
         {
             UIApplication uiapp = commandData.Application;
             UIDocument uidoc = uiapp.ActiveUIDocument;
-            Application app = uiapp.Application;
+            RApiApp.Application app = uiapp.Application;
             Document doc = uidoc.Document;
             //***************
             //Test message
@@ -50,7 +51,7 @@ namespace ConTechTools
 
 
             List<string> ObjStylesSettingString = new List<string>();
-            string header = "ParrentCategory:SubCategoryName:LW_Projection:LW_Cut:LineColor:LinePattern:Material";
+            string header = "Category:LW_Projection:LW_Cut:LineColor:LinePattern:Material";
             Debug.Print(header);
 
             // get all categories
@@ -59,7 +60,7 @@ namespace ConTechTools
             {
                 //if (c.CategoryType == CategoryType.Model || c.CategoryType == CategoryType.Annotation)
                 if (c.CategoryType == CategoryType.Model && c.CanAddSubcategory == true)
-                    {
+                {
                     // Output the visible categories
                     if (c.IsVisibleInUI)
                     {
@@ -86,6 +87,8 @@ namespace ConTechTools
                     }
                 }
             }
+
+
 
             // Sort and insert the headers
             //ObjStylesSettingString.Sort();
@@ -133,9 +136,10 @@ namespace ConTechTools
 
             // ParrentCategory,SubCategoryName Columns
             if (cat.Parent != null)
-                rowData = "---|" + ":" + cat.Name;//rowData = cat.Parent.Name + ":" + cat.Name;
+                rowData = "---|" + cat.Name;//rowData = cat.Parent.Name + ":" + cat.Name;
+                //rowData = "---|" + ":" + cat.Name;//rowData = cat.Parent.Name + ":" + cat.Name;
             else
-                rowData = cat.Name + ":" + cat.Name;
+                rowData = cat.Name + ":------------------------------------:" + cat.Name; // This line never should ouput
 
             int? projLW = cat.GetLineWeight(GraphicsStyleType.Projection);
             int? cutLW = cat.GetLineWeight(GraphicsStyleType.Cut);
