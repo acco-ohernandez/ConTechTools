@@ -56,14 +56,22 @@ namespace ConTechTools
 
             // get all categories
             Categories categories = doc.Settings.Categories;
-            foreach (Category c in categories)
-            {
+
+            // Sort the parrent cattegories
+            List<Category> CatsSortedList = new List<Category>();
+            CatsSortedList = SortCategories(categories);
+
+            foreach (Category c in CatsSortedList)
+                {
                 //if (c.CategoryType == CategoryType.Model || c.CategoryType == CategoryType.Annotation)
                 if (c.CategoryType == CategoryType.Model && c.CanAddSubcategory == true)
                 {
                     // Output the visible categories
                     if (c.IsVisibleInUI)
                     {
+                        //if (c.Name.ToString() == "Lines")
+                        //{ Debug.Print("Lines is here ==============================="); }
+
                         string GetParrentCategoryValues = c.Name + ":" +
                                    (c.GetLineWeight(GraphicsStyleType.Projection)).ToString() + ":" +
                                    (c.GetLineWeight(GraphicsStyleType.Cut)).ToString() + ":" +
@@ -75,9 +83,11 @@ namespace ConTechTools
                         ObjStylesSettingString.Add(GetParrentCategoryValues);
 
                         CategoryNameMap subCats = c.SubCategories;
-                        if (subCats != null)
+                        List<Category> subCatsSortedList = new List<Category>();
+                        subCatsSortedList = SortCategories(subCats);
+                        if (subCatsSortedList != null)
                         {
-                            foreach (Category cat in subCats)
+                            foreach (Category cat in subCatsSortedList)
                             {
                                 string returnedCategory = OutputCatInfo(doc, cat);
                                 Debug.Print(returnedCategory);
@@ -90,14 +100,32 @@ namespace ConTechTools
 
 
 
-            // Sort and insert the headers
-            //ObjStylesSettingString.Sort();
+            // Insert the headers
             ObjStylesSettingString.Insert(0, header);
 
             // Create the excel file and add the ObjectStylesSettinsg data.
             AddToExcel(excelFileName, ObjStylesSettingString); 
 
             return Result.Succeeded;
+        }
+
+        private List<Category> SortCategories(CategoryNameMap subCats)
+        {
+            var modelCatsList = new Dictionary<string, Category>();
+
+            foreach (Category c in subCats)
+            {
+                modelCatsList.Add(c.Name, c);
+            }
+            var sortedKeys = modelCatsList.Keys.ToList();
+            sortedKeys.Sort();
+            List<Category> modelCategories = new List<Category>();
+            foreach (var key in sortedKeys)
+            {
+                Debug.Print(modelCatsList[key].Name);
+                modelCategories.Add(modelCatsList[key]);
+            }
+            return modelCategories;
         }
 
         private string GetCategoryMaterial(Material catMaterial)
@@ -132,14 +160,13 @@ namespace ConTechTools
         {
             string rowData;
             // This will de Data to the following columns of the Excel file.
-            // ParrentCategory,SubCategoryName,LW_Projection,LW_Cut,LineColor,LinePattern,Material
+            // CategoryName,LW_Projection,LW_Cut,LineColor,LinePattern,Material
 
             // ParrentCategory,SubCategoryName Columns
             if (cat.Parent != null)
-                rowData = "---|" + cat.Name;//rowData = cat.Parent.Name + ":" + cat.Name;
-                //rowData = "---|" + ":" + cat.Name;//rowData = cat.Parent.Name + ":" + cat.Name;
+                rowData = "---| " + cat.Name;//rowData = cat.Parent.Name + ":" + cat.Name;  // Child category name
             else
-                rowData = cat.Name + ":------------------------------------:" + cat.Name; // This line never should ouput
+                rowData = cat.Name + ":------------------------------------:" + cat.Name; // This line should never ouput
 
             int? projLW = cat.GetLineWeight(GraphicsStyleType.Projection);
             int? cutLW = cat.GetLineWeight(GraphicsStyleType.Cut);
@@ -149,21 +176,22 @@ namespace ConTechTools
 
             Element projLineType = doc.GetElement(projLinePatternId);
             Element cutLineType = doc.GetElement(cutLinePatternId);
-            
-            // LW_Projection Column
-            if (cutLW != null)
-                rowData += ":" + cutLW.ToString();
-            else
-                rowData += ":";
 
-            // LW_Cut Column
+
+            // LW_Projection Column
             if (projLW != null)
                 rowData += ":" + projLW.ToString();
             else
                 rowData += ":";
 
-            rowData += ":" + GetLineColorName(cat.LineColor);
+            // LW_Cut Column
+            if (cutLW != null)
+                rowData += ":" + cutLW.ToString();
+            else
+                rowData += ":";
 
+            // Line Color Column
+            rowData += ":" + GetLineColorName(cat.LineColor);
 
             // LinePattern Column
             if (cutLineType != null)
