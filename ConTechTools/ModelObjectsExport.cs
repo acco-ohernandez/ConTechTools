@@ -63,12 +63,18 @@ namespace ConTechTools
 
             foreach (Category c in CatsSortedList)
                 {
+                // This if statememt is only for debugging 
+                //if (c.Name.ToString() == "Curtain Systems")
+                //{ Debug.Print("Lines is here ==============================="); }
+
                 //if (c.CategoryType == CategoryType.Model || c.CategoryType == CategoryType.Annotation)
-                if (c.CategoryType == CategoryType.Model && c.CanAddSubcategory == true)
-                {
+                //if (c.CategoryType == CategoryType.Model && c.CanAddSubcategory == true)
+                if (c.CategoryType == CategoryType.Model)
+                    {
                     // Output the visible categories
                     if (c.IsVisibleInUI)
                     {
+                        // This if statememt is only for debugging 
                         //if (c.Name.ToString() == "Lines")
                         //{ Debug.Print("Lines is here ==============================="); }
 
@@ -104,7 +110,7 @@ namespace ConTechTools
             ObjStylesSettingString.Insert(0, header);
 
             // Create the excel file and add the ObjectStylesSettinsg data.
-            AddToExcel(excelFileName, ObjStylesSettingString); 
+            AddToExcel(excelFileName, ObjStylesSettingString);
 
             return Result.Succeeded;
         }

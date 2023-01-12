@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <RevitAddIns>
+<!--
   <AddIn Type="Command">
     <Text>ConTech Tools</Text>
     <Description>Some description for ConTechTools</Description>
@@ -9,6 +10,7 @@
     <VendorId>com.typepad.thebuildingcoder</VendorId>
     <VendorDescription>The Building Coder, http://thebuildingcoder.typepad.com</VendorDescription>
   </AddIn>
+-->
   <AddIn Type="Application">
     <Name>Application ConTechTools</Name>
     <Assembly>ConTechTools.dll</Assembly>
