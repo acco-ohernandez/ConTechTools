@@ -64,13 +64,18 @@ namespace ConTechTools
             foreach (Category c in CatsSortedList)
                 {
                 // This if statememt is only for debugging 
-                //if (c.Name.ToString() == "Curtain Systems")
-                //{ Debug.Print("Lines is here ==============================="); }
+                if (c.Name.ToString() == "Curtain Systems")
+                { Debug.Print("Curtain Systems is here ==============================="); }
+
+                //bool catInExceptionList = IsCatInExceptionList(c.Name.ToString());
+
+
 
                 //if (c.CategoryType == CategoryType.Model || c.CategoryType == CategoryType.Annotation)
                 //if (c.CategoryType == CategoryType.Model && c.CanAddSubcategory == true)
-                if (c.CategoryType == CategoryType.Model)
-                    {
+                //if (c.CategoryType == CategoryType.Model)
+                if (c.CategoryType == CategoryType.Model && CatIsNotInExceptionList(c.Name.ToString()) )  // filtered categories
+                {
                     // Output the visible categories
                     if (c.IsVisibleInUI)
                     {
@@ -88,7 +93,7 @@ namespace ConTechTools
                         Debug.Print(GetParrentCategoryValues);
                         ObjStylesSettingString.Add(GetParrentCategoryValues);
 
-                        CategoryNameMap subCats = c.SubCategories;
+                        CategoryNameMap subCats = c.SubCategories;                        
                         List<Category> subCatsSortedList = new List<Category>();
                         subCatsSortedList = SortCategories(subCats);
                         if (subCatsSortedList != null)
@@ -113,6 +118,44 @@ namespace ConTechTools
             AddToExcel(excelFileName, ObjStylesSettingString);
 
             return Result.Succeeded;
+        }
+
+        private bool CatIsNotInExceptionList(string categoryName)
+        {
+            // This method will return true if "categoryName" is in this list "categoriesExeptionList"
+            string[] categoriesExeptionList =
+            {
+                "Analysis Display Style",
+                "Analysis Results",
+                "Areas",
+                "Cable Tray Runs",
+                "Conduit Runs",
+                "Coordination Model",
+                "Curtain Grids",
+                //"Curtain Systems",
+                "Duct Systems",
+                "Electrical Circuits",
+                "Electrical Spare/Space Circuits",
+                "Filled region",
+                "Imports in Families",
+                "Masking Region",
+                "Pipe Segments",
+                "Piping Systems",
+                "Point Clouds",
+                "Project Information",
+                "Raster Images",
+                "Rooms",
+                "Routing Preferences",
+                "Sheets",
+                "Spaces",
+                "Switch System"
+            };
+
+            if (categoriesExeptionList.Contains(categoryName))
+            {
+                return false;
+            }
+            return true;
         }
 
         private List<Category> SortCategories(CategoryNameMap subCats)
