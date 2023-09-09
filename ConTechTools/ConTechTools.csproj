@@ -60,6 +60,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App.cs" />
+    <Compile Include="AnnotationObjsExport.cs" />
     <Compile Include="ModelObjectsExport.cs" />
     <Compile Include="Command.cs" />
     <Compile Include="ModelObjectsStyleImport.cs" />
