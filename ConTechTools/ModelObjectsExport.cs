@@ -1,20 +1,23 @@
 #region Namespaces
-using RApiApp =  Autodesk.Revit.ApplicationServices;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Windows.Controls;
+
 using Autodesk.Revit.Attributes;
 //using Autodesk.Revit.Creation;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
-using Excel = Microsoft.Office.Interop.Excel;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using WinSys =  System.Windows;
-using SysDraw = System.Drawing;
-using System.IO;
-using System.Windows.Controls;
+
 using Microsoft.Office.Interop.Excel;
+
+using Excel = Microsoft.Office.Interop.Excel;
+using RApiApp = Autodesk.Revit.ApplicationServices;
+using SysDraw = System.Drawing;
+using WinSys = System.Windows;
 //using System.Windows.Forms;
 
 #endregion
@@ -35,8 +38,8 @@ namespace ConTechTools
             Document doc = uidoc.Document;
             //***************
             //Test message
-            WinSys.MessageBox.Show("This will Export the Model Object Style Settings!", "Exporting MOSS",WinSys.MessageBoxButton.OK,WinSys.MessageBoxImage.Exclamation);
-            
+            WinSys.MessageBox.Show("This will Export the Model Object Style Settings!", "Exporting MOSS", WinSys.MessageBoxButton.OK, WinSys.MessageBoxImage.Exclamation);
+
             //***************
 
             // Get the current date and time
@@ -62,7 +65,7 @@ namespace ConTechTools
             CatsSortedList = SortCategories(categories);
 
             foreach (Category c in CatsSortedList)
-                {
+            {
                 // This if statememt is only for debugging 
                 if (c.Name.ToString() == "Curtain Systems")
                 { Debug.Print("Curtain Systems is here ==============================="); }
@@ -74,7 +77,7 @@ namespace ConTechTools
                 //if (c.CategoryType == CategoryType.Model || c.CategoryType == CategoryType.Annotation)
                 //if (c.CategoryType == CategoryType.Model && c.CanAddSubcategory == true)
                 //if (c.CategoryType == CategoryType.Model)
-                if (c.CategoryType == CategoryType.Model && CatIsNotInExceptionList(c.Name.ToString()) )  // filtered categories
+                if (c.CategoryType == CategoryType.Model && CatIsNotInExceptionList(c.Name.ToString()))  // filtered categories
                 {
                     // Output the visible categories
                     if (c.IsVisibleInUI)
@@ -93,7 +96,7 @@ namespace ConTechTools
                         Debug.Print(GetParrentCategoryValues);
                         ObjStylesSettingString.Add(GetParrentCategoryValues);
 
-                        CategoryNameMap subCats = c.SubCategories;                        
+                        CategoryNameMap subCats = c.SubCategories;
                         List<Category> subCatsSortedList = new List<Category>();
                         subCatsSortedList = SortCategories(subCats);
                         if (subCatsSortedList != null)
@@ -190,7 +193,7 @@ namespace ConTechTools
         {
             ElementId ElemId = cat.GetLinePatternId(GraphicsStyleType.Projection);
             Element catLinePatter = doc.GetElement(ElemId);
-            if(catLinePatter != null)
+            if (catLinePatter != null)
                 return catLinePatter.Name;
             else if (ElemId.IntegerValue == -3000010)
                 return "Solid";
