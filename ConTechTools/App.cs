@@ -37,7 +37,7 @@ namespace ConTechTools
             PushButtonData pData1 = new PushButtonData("MOS_Export", "Export\rObject Styles", GetAssemblyName(), "ConTechTools.ModelObjectsExport");
             PushButtonData pData2 = new PushButtonData("MOS_Import", "Import\rObject Styles", GetAssemblyName(), "ConTechTools.ModelObjectsStyleImport");
             PushButtonData pData3 = new PushButtonData("AOS_Export", "Export\rAnnotationStyles", GetAssemblyName(), "ConTechTools.AnnotationObjsExport");
-            PushButtonData pData4 = new PushButtonData("Button4Name", "pbNotInUse4", GetAssemblyName(), "ConTechTools.TemporaryCommand");
+            PushButtonData pData4 = new PushButtonData("AOS_Export", "AOS_ExportTest", GetAssemblyName(), "ConTechTools.Testing");
             PushButtonData pData5 = new PushButtonData("Button5Name", "pbNotInUse5", GetAssemblyName(), "ConTechTools.TemporaryCommand");
             PushButtonData pData6 = new PushButtonData("Button6Name", "pbNotInUse6", GetAssemblyName(), "ConTechTools.TemporaryCommand");
             PushButtonData pData7 = new PushButtonData("Button7Name", "pbNotInUse7", GetAssemblyName(), "ConTechTools.TemporaryCommand");
