@@ -45,7 +45,7 @@ namespace ConTechTools
                     // Export annotation object styles for each category, including sub-settings
                     foreach (Category category in annotationCategories)
                     {
-                        Debug.Print($"{category.Name} - {category.IsReadOnly} - {category.LineColor}");
+                        Debug.Print($"{category.Name} - {category.IsReadOnly} - {category.LineColor.Red}{category.LineColor.Green}{category.LineColor.Blue}");
 
                         // Export object styles and add data to the list
                         ExportObjectStyles(doc, category, exportDataList);
@@ -76,53 +76,26 @@ namespace ConTechTools
         // Helper method to get all annotation categories, including sub-settings
         private List<Category> GetAnnotationCategories(Document doc)
         {
+            // Get the categories from the document settings
             Categories categories = doc.Settings.Categories;
 
-            // Get all categories and sort them by name in ascending order
-            List<Category> allCategories = categories.Cast<Category>().OrderBy(cat => cat.Name).ToList();
+            // Use LINQ to filter and sort the categories
+            List<Category> annotationCategories = categories.Cast<Category>()
+                // Filter categories based on CategoryType
+                .Where(cat => cat.CategoryType == CategoryType.Annotation)
+                // Sort categories by name in ascending order
+                .OrderBy(cat => cat.Name)
+                // Convert the result to a List<Category>
+                .ToList();
 
-            List<Category> annotationCategories = new List<Category>();
-
-            // Filter for annotation categories
-            foreach (Category cat in allCategories)
-            {
-                if (cat.CategoryType == CategoryType.Annotation)
-                {
-                    annotationCategories.Add(cat);
-                }
-            }
-
+            // Return the list of annotation categories
             return annotationCategories;
-        }
-
-        // Helper method to export sub-settings of a category
-        private void ExportSubSettings(Document doc, Category category, List<ExportData> exportDataList, string prefix = "")
-        {
-            CategoryNameMap subCategories = category.SubCategories;
-
-            if (subCategories != null && subCategories.Size > 0)
-            {
-                // Sort the subCategories by name
-                List<Category> sortedSubCategories = subCategories.Cast<Category>()
-                    .OrderBy(subCat => subCat.Name).ToList();
-
-                foreach (Category subCategory in sortedSubCategories)
-                {
-                    prefix = " |--";
-                    Debug.Print($"{prefix}{subCategory.Name} - {subCategory.IsReadOnly} - {subCategory.LineColor}");
-
-                    // Export object styles and add data to the list
-                    ExportObjectStyles(doc, subCategory, exportDataList, prefix); // Pass the prefix to ExportObjectStyles
-
-                    // Recursively export sub-settings of this sub-category with the updated prefix
-                    ExportSubSettings(doc, subCategory, exportDataList, prefix); // Update the prefix
-                }
-            }
         }
 
         // Helper method to export object styles for a category
         private void ExportObjectStyles(Document doc, Category category, List<ExportData> exportDataList, string prefix = "")
         {
+            // Check if the category is null
             if (category == null)
             {
                 Debug.Print("Category is null.");
@@ -137,13 +110,14 @@ namespace ConTechTools
                 LinePattern = GetLinePatternName(doc, category),
             };
 
-            // Check if LineColor is available and not null
+            // Check if GraphicsStyle is available
             if (category.GetGraphicsStyle(GraphicsStyleType.Projection) is GraphicsStyle graphicsStyle)
             {
+                // Check if LineColor is available and not null
                 var lineColor = graphicsStyle.GraphicsStyleCategory.LineColor;
                 if (lineColor != null)
                 {
-                    // Get the RGB values of the LineColor
+                    // Create a Revit color from RGB values
                     Autodesk.Revit.DB.Color revitColor = new Autodesk.Revit.DB.Color(
                         lineColor.Red,
                         lineColor.Green,
@@ -158,21 +132,55 @@ namespace ConTechTools
             exportDataList.Add(exportData);
         }
 
+        // Helper method to export sub-settings of a category
+        private void ExportSubSettings(Document doc, Category category, List<ExportData> exportDataList, string prefix = "")
+        {
+            // Get the sub-categories of the category
+            CategoryNameMap subCategories = category.SubCategories;
+
+            if (subCategories != null && subCategories.Size > 0)
+            {
+                // Define the prefix for sub-categories
+                string subCategoryPrefix = " |--";
+
+                // Iterate through the sub-categories
+                foreach (Category subCategory in subCategories)
+                {
+
+                    // Print sub-category details (you can remove this if not needed)
+                    Debug.Print($"{prefix}{subCategoryPrefix}{subCategory.Name} - {subCategory.IsReadOnly} - {subCategory.LineColor}");
+
+                    // Export object styles and add data to the list
+                    ExportObjectStyles(doc, subCategory, exportDataList, prefix + subCategoryPrefix);
+
+                    // Recursively export sub-settings of this sub-category with the updated prefix
+                    ExportSubSettings(doc, subCategory, exportDataList, prefix + subCategoryPrefix);
+                }
+            }
+        }
+
+
         private string GetLinePatternName(Document doc, Category category)
         {
+            // Get the ElementId of the line pattern for the specified category
             ElementId linePatternId = category.GetLinePatternId(GraphicsStyleType.Projection);
+
+            // Try to get the line pattern element from the document using the ElementId
             Element linePattern = doc.GetElement(linePatternId);
 
             if (linePattern != null)
             {
+                // If a line pattern element was found, return its name
                 return linePattern.Name;
             }
             else if (linePatternId.IntegerValue == -3000010)
             {
+                // Check if the line pattern Id corresponds to a solid line (-3000010)
                 return "Solid";
             }
             else
             {
+                // If no line pattern element was found and it's not a solid line, return "N/A"
                 return "N/A";
             }
         }
