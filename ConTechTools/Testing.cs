@@ -57,6 +57,7 @@ namespace ConTechTools
 
                     // Export data to EPPlus with Save As functionality
                     ExportDataToEPPlusWithSaveAs(exportDataList);
+
                 }
                 else
                 {
@@ -106,7 +107,7 @@ namespace ConTechTools
             ExportData exportData = new ExportData
             {
                 CategoryName = $"{prefix}{category.Name}", // Include the prefix in the category name
-                LineWeight = category.GetLineWeight(GraphicsStyleType.Projection)?.ToString() ?? "N/A",
+                LineWeight = category.GetLineWeight(GraphicsStyleType.Projection)?.ToString() ?? "-",
                 LinePattern = GetLinePatternName(doc, category),
             };
 
@@ -180,8 +181,8 @@ namespace ConTechTools
             }
             else
             {
-                // If no line pattern element was found and it's not a solid line, return "N/A"
-                return "N/A";
+                // If no line pattern element was found and it's not a solid line, return "-"
+                return "-";
             }
         }
 
@@ -230,9 +231,62 @@ namespace ConTechTools
                     // Save the Excel file to the chosen location
                     File.WriteAllBytes(excelFilePath, package.GetAsByteArray());
                     Debug.Print($"Data exported to '{excelFilePath}'.");
+
+                    FormatObjectStylesExcelExport(excelFilePath);
+
+                    // Show a TaskDialog to ask if the user wants to open the exported file
+                    TaskDialog _taskScheduleResult = new TaskDialog("Export complete");
+                    _taskScheduleResult.TitleAutoPrefix = false; // Suppress The name of the document in the title
+                    _taskScheduleResult.MainContent = $"Do you want to open the exported file: \n{Path.GetFileName(excelFilePath)} ?";
+                    _taskScheduleResult.CommonButtons = TaskDialogCommonButtons.Yes | TaskDialogCommonButtons.No;
+                    var TDResult = _taskScheduleResult.Show();
+
+                    if (TDResult == TaskDialogResult.Yes)
+                    {
+                        //Process.Start(excelFilePath); // Open the exported file
+                    }
                 }
             }
         }
+
+        // Define your method
+        private void FormatObjectStylesExcelExport(string filePath)
+        {
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+
+            // Load the Excel file using EPPlus
+            using (var package = new ExcelPackage(new FileInfo(filePath)))
+            {
+                // Get the first worksheet in the Excel file
+                var worksheet = package.Workbook.Worksheets[0];
+
+                // Set the font size for the entire worksheet to 11
+                worksheet.Cells.Style.Font.Size = 11;
+
+                // Bold every cell in column A except those starting with " |--"
+                foreach (var cell in worksheet.Cells[2, 1, worksheet.Dimension.End.Row, 1]) // Start from the second row, column A
+                {
+                    if (!cell.Text.StartsWith(" |--"))
+                    {
+                        cell.Style.Font.Bold = true;
+                    }
+                }
+
+                // Auto-fit all columns
+                worksheet.Cells.AutoFitColumns();
+
+                // Freeze the first row (header)
+                worksheet.View.FreezePanes(2, 1); // Freeze the first row except for the header
+
+                // Format the header row (first row) with bold text
+                var headerRow = worksheet.Cells[1, 1, 1, worksheet.Dimension.End.Column]; // Select the entire first row
+                headerRow.Style.Font.Bold = true;
+
+                // Save the changes back to the Excel file
+                package.Save();
+            }
+        }
+
 
         // Data structure to store export data
         private class ExportData
@@ -245,3 +299,4 @@ namespace ConTechTools
     }
 }
 
+//
